@@ -7,10 +7,12 @@ cwppm
 
 Python不是强项，PyQt4就更加是了。在sourceforge又无缘无故被墙后，一整个下午的时间几乎是看着诺基亚的C++版本的API搞了一点。加上eric4的APIs设置了却无法保存，这个原因倒是知道，多半和win7的权限有关系，Python装在C盘。
 
-是不是会继续完善看情况了，windows下有很多免费的博客发布工具（像是微软的live writer、office系列等），至于Mac版本我打算回头用cocoa重写，搞一个native和powerful的版本，不过时间暂定。总之，如果仅仅需要一个简单而且免费的跨平台的WordPress发布工具，不妨试试这个还算方便的小东西。
+是不是会继续完善看情况了，windows下有很多免费的博客发布工具（像是微软的live writer、office系列等），至于Mac版本我打算回头用cocoa重写，搞一个native和powerful的版本，不过时间暂定。
+
+总之，如果仅仅需要一个简单而且免费的跨平台的WordPress发布工具，不妨试试这个还算方便的小东西。
 
 
-![sample 1](https://raw.github.com/ifconfigyeah/cwppm/sample.png)
+![sample 1](https://raw.github.com/ifconfigyeah/cwppm/master/sample.png)
 
 环境需要：
 
