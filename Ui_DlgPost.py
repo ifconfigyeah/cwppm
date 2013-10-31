@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\asus\eric4_workspaces\DlgPost.ui'
 #
-# Created: Tue Oct 29 17:07:03 2013
+# Created: Thu Oct 31 18:48:01 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -77,18 +77,18 @@ class Ui_wp_post(object):
         self.txtEdit_PostContent.setDocumentTitle(_fromUtf8(""))
         self.txtEdit_PostContent.setObjectName(_fromUtf8("txtEdit_PostContent"))
         self.lblPostTags = QtGui.QLabel(wp_post)
-        self.lblPostTags.setGeometry(QtCore.QRect(210, 480, 54, 21))
+        self.lblPostTags.setGeometry(QtCore.QRect(200, 480, 31, 21))
         self.lblPostTags.setScaledContents(True)
         self.lblPostTags.setObjectName(_fromUtf8("lblPostTags"))
         self.lnEditPostTags = QtGui.QLineEdit(wp_post)
         self.lnEditPostTags.setGeometry(QtCore.QRect(250, 480, 161, 21))
         self.lnEditPostTags.setObjectName(_fromUtf8("lnEditPostTags"))
         self.lblPostCategories = QtGui.QLabel(wp_post)
-        self.lblPostCategories.setGeometry(QtCore.QRect(570, 480, 71, 21))
+        self.lblPostCategories.setGeometry(QtCore.QRect(590, 480, 71, 21))
         self.lblPostCategories.setScaledContents(True)
         self.lblPostCategories.setObjectName(_fromUtf8("lblPostCategories"))
         self.lnEditPostCategories = QtGui.QLineEdit(wp_post)
-        self.lnEditPostCategories.setGeometry(QtCore.QRect(650, 480, 171, 21))
+        self.lnEditPostCategories.setGeometry(QtCore.QRect(670, 480, 151, 21))
         self.lnEditPostCategories.setText(_fromUtf8(""))
         self.lnEditPostCategories.setObjectName(_fromUtf8("lnEditPostCategories"))
         self.lbl_Pages = QtGui.QLabel(wp_post)
@@ -100,24 +100,29 @@ class Ui_wp_post(object):
         self.lbl_Posts.setScaledContents(True)
         self.lbl_Posts.setObjectName(_fromUtf8("lbl_Posts"))
         self.lblPostTags_2 = QtGui.QLabel(wp_post)
-        self.lblPostTags_2.setGeometry(QtCore.QRect(420, 480, 131, 21))
+        self.lblPostTags_2.setGeometry(QtCore.QRect(420, 480, 111, 21))
         self.lblPostTags_2.setScaledContents(True)
         self.lblPostTags_2.setObjectName(_fromUtf8("lblPostTags_2"))
         self.conn_btn = QtGui.QPushButton(wp_post)
         self.conn_btn.setGeometry(QtCore.QRect(750, 560, 75, 23))
         self.conn_btn.setObjectName(_fromUtf8("conn_btn"))
-        self.tv_posts = QtGui.QTreeView(wp_post)
-        self.tv_posts.setGeometry(QtCore.QRect(10, 60, 181, 271))
-        self.tv_posts.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        self.tv_posts.setAnimated(True)
-        self.tv_posts.setHeaderHidden(True)
-        self.tv_posts.setObjectName(_fromUtf8("tv_posts"))
-        self.tv_pages = QtGui.QTreeView(wp_post)
-        self.tv_pages.setGeometry(QtCore.QRect(10, 360, 181, 221))
-        self.tv_pages.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        self.tv_pages.setAnimated(True)
-        self.tv_pages.setHeaderHidden(True)
-        self.tv_pages.setObjectName(_fromUtf8("tv_pages"))
+        self.lw_posts = QtGui.QListWidget(wp_post)
+        self.lw_posts.setGeometry(QtCore.QRect(10, 60, 181, 271))
+        self.lw_posts.setObjectName(_fromUtf8("lw_posts"))
+        self.cb_post_status = QtGui.QComboBox(wp_post)
+        self.cb_post_status.setGeometry(QtCore.QRect(250, 510, 81, 22))
+        self.cb_post_status.setObjectName(_fromUtf8("cb_post_status"))
+        self.lblPostStatus = QtGui.QLabel(wp_post)
+        self.lblPostStatus.setGeometry(QtCore.QRect(200, 510, 41, 21))
+        self.lblPostStatus.setScaledContents(True)
+        self.lblPostStatus.setObjectName(_fromUtf8("lblPostStatus"))
+        self.lw_pages = QtGui.QListWidget(wp_post)
+        self.lw_pages.setGeometry(QtCore.QRect(10, 360, 181, 221))
+        self.lw_pages.setObjectName(_fromUtf8("lw_pages"))
+        self.cb_isNewPost = QtGui.QCheckBox(wp_post)
+        self.cb_isNewPost.setGeometry(QtCore.QRect(760, 40, 72, 17))
+        self.cb_isNewPost.setChecked(True)
+        self.cb_isNewPost.setObjectName(_fromUtf8("cb_isNewPost"))
 
         self.retranslateUi(wp_post)
         QtCore.QObject.connect(self.exit_btn, QtCore.SIGNAL(_fromUtf8("clicked()")), wp_post.close)
@@ -135,6 +140,8 @@ class Ui_wp_post(object):
         self.lbl_Posts.setText(_translate("wp_post", "Posts", None))
         self.lblPostTags_2.setText(_translate("wp_post", "(muti use \',\' sep)", None))
         self.conn_btn.setText(_translate("wp_post", "connection", None))
+        self.lblPostStatus.setText(_translate("wp_post", "Status", None))
+        self.cb_isNewPost.setText(_translate("wp_post", "New", None))
 
 
 if __name__ == "__main__":

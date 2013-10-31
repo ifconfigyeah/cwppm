@@ -37,13 +37,20 @@ class PostMain(QMainWindow, Ui_wp_post):
         self.setupUi(self)
         reload(sys)
         sys.setdefaultencoding('utf-8')
-        self.txtEdit_PostContent.setAcceptRichText(0)
-        self.txtEdit_PostContent.setUndoRedoEnabled(0)
+        # set default is new post
+        self._newPost_ = True
+        self._postId_ = None
+        # show no login tip...
+        self.lblSiteTitle.setText("<font color=red> No Login!</font>")
+        # fill post-status combobox
+        self.initPostStatus()
+        # some event
         self.connect(self.exit_btn, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
         self.connect(self.conn_btn, QtCore.SIGNAL('clicked()'), self.loginWP)
-        # show no login tip...
-        self.lblSiteTitle.setText("<font color=red> No Login! Click conn button.</font>")
-    
+        self.lw_posts.itemDoubleClicked.connect(self.posts_and_pages_slot)
+        self.lw_pages.itemDoubleClicked.connect(self.posts_and_pages_slot)
+        self.cb_isNewPost.toggled.connect(self.handlePostType)
+
 
     @pyqtSignature("")
     def on_post_btn_clicked(self):
@@ -77,14 +84,13 @@ class PostMain(QMainWindow, Ui_wp_post):
         
         
     def loginWP(self):
-        
         self.isWin = False
         if sys.platform.startswith('win'):
             self.isWin = True
 
         # reading configuration file...
         try:
-            cfg = "cwppm.cfg"
+            cfg = "cwppm.cfg"   # TODO
             config = ConfigParser.ConfigParser()
             if not self.isWin:
                 config.read(cfg)
@@ -107,12 +113,12 @@ class PostMain(QMainWindow, Ui_wp_post):
             self.setWindowTitle('cwppm - ' + WPBlog[0].name)
             self.lblSiteTitle.setText("<font color=green><b>Welcome back, " + WPUser.username + "!</b></font>")
             
-            # fill posts and pages tree view
+            # fill posts info in ListWidget
             self.getPosts()
             self.getPages()
             
         except Exception, ex:
-            err = 'Connection failed! ' + str(ex) + ', click [conn] button to try again!'
+            err = 'Connection your blog failed! ' + str(ex) + ', Pls try again!'
             self.conn_btn.setFocus()
             QtGui.QMessageBox.information(self, 'info', err, QtGui.QMessageBox.Ok)
             self.lblSiteTitle.setText("<font color=red> No Login.</font>")
@@ -121,6 +127,8 @@ class PostMain(QMainWindow, Ui_wp_post):
     
     def doPost(self):
         post = WordPressPost()
+        
+        # get all post properties
         post.title = str(unicode(self.lnEdit_PostTitle.text()))
         post.content = str(unicode(self.txtEdit_PostContent.toPlainText()))
         tag = unicode(self.lnEditPostTags.text())
@@ -132,50 +140,90 @@ class PostMain(QMainWindow, Ui_wp_post):
             'post_tag': tag,
             'category': category
         }
-        post.post_status = 'publish'		# 'draft'
+        post.post_status = str(self.cb_post_status.currentText())
         
         try:
-            post.id = self.wp.call(NewPost(post))
-            self.clearWidget()
-            QtGui.QMessageBox.information(self, 'cwppm', "Post success! " + "id: " + post.id, QtGui.QMessageBox.Ok)
-            self.getPosts()
+            # new post or page-type post
+            if (self._newPost_):
+                post.id = self.wp.call(posts.NewPost(post))
+                QtGui.QMessageBox.information(self, 'info', "Post success!", QtGui.QMessageBox.Ok)
+            else:
+                print 'edit...'
+                # edit a post
+                if self._postId_ != None:
+                    self.wp.call(posts.EditPost(self._postId_, post))
+                    QtGui.QMessageBox.information(self, 'info', "Edit success!", QtGui.QMessageBox.Ok)
         except Exception, e:
-             QtGui.QMessageBox.information(self, 'err', str(e), QtGui.QMessageBox.Ok)
+            QtGui.QMessageBox.information(self, 'err', str(e), QtGui.QMessageBox.Ok)
+        finally:
+            self.clearWidget()
+            self.getPosts()
             
+    def initPostStatus(self):
+        statusList = ['publish', 'draft', 'pending']
+        self.cb_post_status.addItems(statusList)
         
+        
+    def changePostStatusIndex(self, status):
+        if status == 'publish':
+            self.cb_post_status.setCurrentIndex(0)
+        if status == 'draft':
+            self.cb_post_status.setCurrentIndex(1)
+        if status == 'pending':
+            self.cb_post_status.setCurrentIndex(2)
+
+            
+    def handlePostType(self):
+        if self.cb_isNewPost.isChecked:
+            self._newPost_ = True
+        else: self._newPost_ = False
+             
+
     def clearWidget(self):
         self.lnEdit_PostTitle.setText("")
         self.lnEditPostTags.setText("")
         self.lnEditPostCategories.setText("")
         self.txtEdit_PostContent.setText("")
+        self._newPost_ = True
+        self._postId_ = None
         
         
     def clearWithException(self):
         self.setWindowTitle('cwppm')
-        self.tv_posts.reset()
-        self.tv_pages.reset()
+        self.lw_posts.clear()
 
     
     def getPosts(self):
+        self.lw_posts.clear()
         self.wp_posts = self.wp.call(GetPosts({'number':'100000'}))
-        postModel = QStandardItemModel(len(self.wp_posts), 1, parent=self.tv_posts)
-        for i, post in enumerate(self.wp_posts):
-            item = QStandardItem(QString(post.title))
-            postModel.setItem(i, item)
-        self.tv_posts.setModel(postModel)
-        
-        # hidden empty rows
-        # TODO: use
-        
+        for p in self.wp_posts:
+            item = QString(p.title + ',' + p.id)
+            self.lw_posts.insertItem(int(p.id), item)
 
     def getPages(self):
+        self.lw_pages.clear()
         self.wp_pages = self.wp.call(GetPosts({'post_type': 'page'}, results_class=WordPressPage))
-        pageModel = QStandardItemModel(len(self.wp_pages), 1, parent=self.tv_pages)
-        for i, page in enumerate(self.wp_pages):
-            item = QStandardItem(QString(page.title))
-            pageModel.setItem(i, item)      # TODO int(page.id), send clicked sign(rowId) to SLOT, then load a post by rowId(post.id) for quick look or edit
-        self.tv_pages.setModel(pageModel)
+        for p in self.wp_pages:
+            item = QString(p.title + ',' + p.id)
+            self.lw_pages.insertItem(int(p.id), item) 
     
+    
+    def posts_and_pages_slot(self, item):
+        self.cb_isNewPost.setChecked(False)
+        self._postId_ = str(item.text()).split(',')[1]
+        if self._postId_ != None and self._postId_.strip() != '':
+            try:
+                post = self.wp.call(posts.GetPost(self._postId_))
+                self.lnEdit_PostTitle.setText(post.title)
+                self.txtEdit_PostContent.setText(post.content)
+                self.changePostStatusIndex(post.post_status)
+                self._newPost_ = False
+            except Exception, e:
+                QtGui.QMessageBox.information(self, 'err', str(e), QtGui.QMessageBox.Ok)
+        else:
+            mes = 'posts is not exists, pls click connection button to refresh!'
+            QtGui.QMessageBox.information(self, 'info', mes, QtGui.QMessageBox.Ok)
+            
     
 if __name__ == "__main__":
     
